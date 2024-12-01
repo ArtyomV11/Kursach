@@ -1,16 +1,17 @@
 import sqlite3
 
-# Подключаемся к базе данных
-conn = sqlite3.connect("venn_data.db")
+conn = sqlite3.connect("venn_data.db", detect_types=sqlite3.PARSE_DECLTYPES | sqlite3.PARSE_COLNAMES, check_same_thread=False)
 cursor = conn.cursor()
 
-# Выполняем SQL-запрос для получения всех данных из таблицы
-cursor.execute("SELECT * FROM venn_data")
+try:
+    cursor.execute("SELECT * FROM venn_data")
+    rows = cursor.fetchall()
+    for row in rows:
+        print(tuple(str(item) for item in row))
 
-# Извлекаем все записи и выводим их
-rows = cursor.fetchall()
-for row in rows:
-    print(row)
-
-# Закрываем соединение с базой данных
-conn.close()
+except sqlite3.Error as e:
+    print(f"Ошибка SQLite: {e}")
+except Exception as e:
+    print(f"Произошла ошибка: {e}")
+finally:
+    conn.close()
